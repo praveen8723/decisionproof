@@ -140,6 +140,13 @@ function downloadJson(value, filename) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+function replayTextAnimation(element) {
+  if (!element || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  element.classList.remove("text-refresh");
+  void element.offsetWidth;
+  element.classList.add("text-refresh");
+}
+
 function saveHistory() {
   try {
     sessionStorage.setItem("decisionproof-history", JSON.stringify(sessionDecisions));
@@ -152,7 +159,9 @@ function renderHistory() {
   historyList.replaceChildren();
   historyEmpty.classList.toggle("hidden", sessionDecisions.length > 0);
   historyCount.textContent = `${sessionDecisions.length} ${sessionDecisions.length === 1 ? "entry" : "entries"}`;
-  document.querySelector("#session-count").textContent = String(sessionDecisions.length);
+  const sessionCount = document.querySelector("#session-count");
+  sessionCount.textContent = String(sessionDecisions.length);
+  replayTextAnimation(sessionCount);
   if (sessionDecisions.length > 0 && !latestAuditExport) {
     auditResult.textContent = "Ready to package the current session for an auditor.";
   }
@@ -218,7 +227,9 @@ function renderReceipt(result, { remember = true } = {}) {
   banner.className = "decision-banner";
   if (result.decision.outcome === "MANUAL_REVIEW") banner.classList.add("review");
   if (result.decision.outcome === "DECLINED") banner.classList.add("declined");
-  document.querySelector("#decision-value").textContent = result.decision.outcome.replace("_", " ");
+  const decisionValue = document.querySelector("#decision-value");
+  decisionValue.textContent = result.decision.outcome.replace("_", " ");
+  replayTextAnimation(decisionValue);
   document.querySelector("#decision-detail").textContent = result.decision.offeredRate
     ? `${result.decision.offeredRate}% indicative rate · ${result.applicationRef}`
     : `${result.decision.reasonCodes.join(" · ")} · ${result.applicationRef}`;
@@ -249,7 +260,9 @@ function renderVerification(verdict, title, copy) {
   verificationSection.classList.remove("hidden", "failed");
   if (!verdict.ok) verificationSection.classList.add("failed");
   verificationSection.dataset.status = verdict.ok ? "pass" : "fail";
-  document.querySelector("#verification-title").textContent = title;
+  const verificationTitle = document.querySelector("#verification-title");
+  verificationTitle.textContent = title;
+  replayTextAnimation(verificationTitle);
   document.querySelector("#verification-copy").textContent = copy;
   checksGrid.replaceChildren();
 
@@ -397,6 +410,7 @@ document.querySelector("#audit-button").addEventListener("click", async (event) 
       ? " Simulator mode intentionally leaves hardware, witness, and public-anchor controls open."
       : " All mapped controls are covered.";
     auditResult.textContent = `${result.verdict.verified}/${result.verdict.total} receipts verified · ${result.verdict.obligationsCovered}/${result.verdict.obligationsTotal} mapped controls covered.${assuranceNote}`;
+    replayTextAnimation(auditResult);
     auditSection.classList.add("is-complete");
     auditDownloadButton.classList.remove("hidden");
     showToast("Audit pack built and independently verified.");
