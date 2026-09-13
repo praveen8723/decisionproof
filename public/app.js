@@ -16,19 +16,31 @@ const failureReasons = document.querySelector("#failure-reasons");
 const toast = document.querySelector("#toast");
 const auditResult = document.querySelector("#audit-result");
 const auditSection = document.querySelector("#audit-section");
+const historyList = document.querySelector("#history-list");
+const historyEmpty = document.querySelector("#history-empty");
+const historyCount = document.querySelector("#history-count");
 
 let activeRecordId = null;
 let activeArtifact = null;
-const sessionArtifacts = [];
-let sessionReceiptCount = 0;
+const storedHistory = (() => {
+  try {
+    const value = JSON.parse(sessionStorage.getItem("decisionproof-history") ?? "[]");
+    return Array.isArray(value)
+      ? value.filter((entry) => entry?.result?.receipt?.recordId && entry.result.artifact).slice(0, 12)
+      : [];
+  } catch {
+    return [];
+  }
+})();
+const sessionDecisions = storedHistory;
+const sessionArtifacts = sessionDecisions.map((entry) => entry.result.artifact);
 let toastTimer = null;
+let proofResetTimer = null;
 
 function updateRiskVisual() {
   const value = Number(score.value);
-  const position = ((value - 300) / 600) * 100;
   const risk = value >= 720 ? "low" : value >= 650 ? "medium" : "high";
   scoreValue.value = String(value);
-  riskMeter.style.setProperty("--score-position", `${position}%`);
   riskMeter.dataset.risk = risk;
   riskTier.textContent = `${risk.toUpperCase()} RISK BAND`;
   riskTier.style.color = risk === "low" ? "var(--green)" : risk === "medium" ? "var(--amber)" : "var(--red)";
@@ -82,12 +94,66 @@ function short(value, start = 16, end = 10) {
   return `${value.slice(0, start)}…${value.slice(-end)}`;
 }
 
-function renderReceipt(result) {
+function saveHistory() {
+  try {
+    sessionStorage.setItem("decisionproof-history", JSON.stringify(sessionDecisions));
+  } catch {
+    showToast("This browser could not save the session ledger.", "error");
+  }
+}
+
+function renderHistory() {
+  historyList.replaceChildren();
+  historyEmpty.classList.toggle("hidden", sessionDecisions.length > 0);
+  historyCount.textContent = `${sessionDecisions.length} ${sessionDecisions.length === 1 ? "entry" : "entries"}`;
+  document.querySelector("#session-count").textContent = String(sessionDecisions.length);
+
+  sessionDecisions.forEach((entry, index) => {
+    const { result, createdAt } = entry;
+    const item = document.createElement("article");
+    item.className = "history-item";
+    if (result.receipt.recordId === activeRecordId) item.classList.add("is-active");
+    item.dataset.outcome = result.decision.outcome;
+    item.setAttribute("role", "listitem");
+
+    const number = document.createElement("span");
+    number.className = "history-number";
+    number.textContent = String(sessionDecisions.length - index).padStart(2, "0");
+
+    const summary = document.createElement("div");
+    summary.className = "history-summary";
+    const top = document.createElement("div");
+    const outcome = document.createElement("strong");
+    outcome.textContent = result.decision.outcome.replace("_", " ");
+    const time = document.createElement("time");
+    time.dateTime = createdAt;
+    time.textContent = new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }).format(new Date(createdAt));
+    top.append(outcome, time);
+    const details = document.createElement("p");
+    details.textContent = `${result.applicationRef} · ${short(result.receipt.recordId, 9, 5)} · ${result.decision.policy}`;
+    summary.append(top, details);
+
+    const open = document.createElement("button");
+    open.className = "history-open";
+    open.type = "button";
+    open.dataset.recordId = result.receipt.recordId;
+    open.textContent = "Open receipt";
+    item.append(number, summary, open);
+    historyList.append(item);
+  });
+}
+
+function renderReceipt(result, { remember = true } = {}) {
   activeRecordId = result.receipt.recordId;
   activeArtifact = result.artifact;
-  sessionArtifacts.unshift(result.artifact);
-  sessionReceiptCount += 1;
-  document.querySelector("#session-count").textContent = String(sessionReceiptCount);
+  if (remember) {
+    sessionDecisions.unshift({ createdAt: new Date().toISOString(), result });
+    sessionArtifacts.unshift(result.artifact);
+    sessionDecisions.splice(12);
+    sessionArtifacts.splice(12);
+    saveHistory();
+    renderHistory();
+  }
   receiptSurface.classList.add("has-receipt");
   emptyState.classList.add("hidden");
   receiptView.classList.remove("hidden");
@@ -115,6 +181,17 @@ function renderReceipt(result) {
   renderVerification(result.receipt.verdict, "Receipt verified", "The receipt passed independent checks immediately after it was created.");
   auditResult.textContent = "Ready to package this receipt for an auditor.";
 }
+
+historyList.addEventListener("click", (event) => {
+  const button = event.target.closest(".history-open");
+  if (!button) return;
+  const entry = sessionDecisions.find(({ result }) => result.receipt.recordId === button.dataset.recordId);
+  if (!entry) return;
+  renderReceipt(entry.result, { remember: false });
+  renderHistory();
+  receiptSurface.scrollIntoView({ behavior: "smooth", block: "center" });
+  showToast("Receipt reopened from the session ledger.");
+});
 
 function renderVerification(verdict, title, copy) {
   verificationSection.classList.remove("hidden", "failed");
@@ -166,7 +243,8 @@ form.addEventListener("submit", async (event) => {
   const data = Object.fromEntries(new FormData(form));
   data.consent = form.elements.consent.checked;
   setBusy(button, true, "Signing the decision…");
-  proofFlow.classList.remove("is-complete");
+  clearTimeout(proofResetTimer);
+  proofFlow.classList.remove("is-complete", "is-live");
   proofFlow.classList.add("is-running");
   receiptSurface.classList.add("is-sealing");
   try {
@@ -174,16 +252,24 @@ form.addEventListener("submit", async (event) => {
     renderReceipt(result);
     proofFlow.classList.remove("is-running");
     proofFlow.classList.add("is-complete");
+    proofResetTimer = setTimeout(() => {
+      proofFlow.classList.remove("is-complete");
+      proofFlow.classList.add("is-live");
+    }, 1800);
     receiptSurface.classList.remove("is-sealing");
     showToast("Decision recorded and verified with CooL.");
   } catch (error) {
     proofFlow.classList.remove("is-running");
+    proofFlow.classList.add("is-live");
     receiptSurface.classList.remove("is-sealing");
     showToast(error.message, "error");
   } finally {
     setBusy(button, false);
   }
 });
+
+if (sessionDecisions[0]) renderReceipt(sessionDecisions[0].result, { remember: false });
+renderHistory();
 
 document.querySelector("#verify-button").addEventListener("click", async (event) => {
   const button = event.currentTarget;
