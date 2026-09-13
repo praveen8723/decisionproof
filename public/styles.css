@@ -108,7 +108,7 @@ a { color: inherit; }
 .cool-link-mark i { width: 18px; height: 18px; position: absolute; border: 1px solid var(--lime); transform: rotate(45deg); }
 .cool-link-mark i:first-child { top: 0; left: 2px; }
 .cool-link-mark i:last-child { right: 2px; bottom: 0; border-color: var(--violet); }
-.cool-link-mark::after { content: ""; width: 5px; height: 5px; position: absolute; top: 10px; left: 14px; z-index: 2; background: var(--white); transform: rotate(45deg); animation: link-lock 2.8s ease-in-out infinite; }
+.cool-link-mark::after { content: ""; width: 5px; height: 5px; position: absolute; top: 10px; left: 14px; z-index: 2; background: var(--white); transform: rotate(45deg); animation: link-lock 1.6s ease-in-out infinite; }
 .cool-link-copy small, .cool-link-copy strong { display: block; line-height: 1; }
 .cool-link-copy small { color: #7f818a; font-size: 0.55rem; letter-spacing: 0.08em; }
 .cool-link-copy strong { margin-top: 4px; color: #dedfe3; font-size: 0.58rem; font-weight: 650; letter-spacing: 0.14em; }
