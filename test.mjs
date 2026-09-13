@@ -49,6 +49,24 @@ try {
   assert.equal(pack.verdict.verified, 1);
   assert.equal(pack.verdict.obligationsCovered >= 1, true);
 
+  const netlifyHandler = (await import("./netlify/functions/api.mjs")).default;
+  const serverlessHealth = await netlifyHandler(
+    new Request("https://decisionproof.test/.netlify/functions/api?action=health"),
+  );
+  assert.equal(serverlessHealth.status, 200);
+  assert.equal((await serverlessHealth.json()).sdk, "cool-nwc 3.0.0");
+
+  const serverlessVerification = await netlifyHandler(new Request(
+    "https://decisionproof.test/.netlify/functions/api?action=verify",
+    {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ artifact: created.artifact }),
+    },
+  ));
+  assert.equal(serverlessVerification.status, 200);
+  assert.equal((await serverlessVerification.json()).verdict.ok, true);
+
   console.log("DecisionProof integration test passed");
 } finally {
   server.close();

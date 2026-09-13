@@ -53,14 +53,15 @@ sequenceDiagram
     User->>Check: Verify, alter a copy, disclose or make an audit pack
 ```
 
-The browser keeps the receipt artifacts created during the current session. It sends them back when the user verifies a receipt or builds an audit pack. That detail matters on Vercel because the next click may reach a fresh serverless instance.
+The browser keeps the receipt artifacts created during the current session. It sends them back when the user verifies a receipt or builds an audit pack. That detail matters on Netlify because the next click may reach a fresh serverless instance.
 
 ## Project layout
 
 | Path | What is there |
 | --- | --- |
 | `public/` | The interface, animations, fonts, icons, and browser-side session state |
-| `api/index.mjs` | The single Vercel Function used by the app |
+| `netlify/functions/api.mjs` | The Netlify Function that receives every evidence request |
+| `netlify.toml` | Hosting, routing, and cache settings for Netlify |
 | `lib/decisionproof.mjs` | The loan rule and every CooL operation |
 | `server.mjs` | A small local server using the same API code |
 | `test.mjs` | One end-to-end test of the full evidence flow |
@@ -118,13 +119,13 @@ The next version would run the evidence service inside a Phala dstack confidenti
 
 ## Deploying
 
-The project is ready for Vercel:
+The project is ready for Netlify. Import this repository, and Netlify will read the publish and function settings from `netlify.toml`. You can also deploy it from the command line:
 
 ```bash
-vercel --prod
+netlify deploy --prod
 ```
 
-Vercel serves `public/` as static files and runs `api/index.mjs` as the evidence API.
+Netlify serves `public/` as the site and sends `/api` requests to `netlify/functions/api.mjs`.
 
 ## License and credits
 
