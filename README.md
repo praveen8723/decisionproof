@@ -21,6 +21,7 @@ The app runs a small, readable personal-loan scorecard. After the user gives con
 From there, you can:
 
 - verify the receipt from its own bytes;
+- download the self-contained receipt as JSON for an independent reviewer;
 - change one character in a copy and watch verification fail;
 - reveal only the committed decision output;
 - create more decisions, verify them together, and download the resulting audit pack as JSON.
@@ -172,16 +173,18 @@ To run the integration test:
 npm test
 ```
 
-The test makes a decision, verifies it, rejects an altered copy, checks a selective disclosure, and verifies an audit pack.
+The test covers approved, manual-review, declined, and missing-consent paths; it also verifies a
+receipt, rejects an altered copy, checks a selective disclosure, and verifies an audit pack.
 
 ## A quick walkthrough
 
 1. Submit the pre-filled application and watch the evidence path finish.
 2. Open the receipt and point out the policy, model, runtime mode, and privacy check.
 3. Scroll to the independent verifier. Each trust domain reports its own result.
-4. Click **Alter a copy**. The binding and signature checks should fail while the original receipt stays untouched.
-5. Click **Reveal outcome** to prove that the disclosed result matches its earlier commitment.
-6. Make one more decision with a different credit score, build the audit pack, and download the verified JSON file.
+4. Download the self-contained receipt to show that the evidence can leave the lender's system.
+5. Click **Alter a copy**. The binding and signature checks should fail while the original receipt stays untouched.
+6. Click **Reveal outcome** to prove that the disclosed result matches its earlier commitment.
+7. Make one more decision with a different credit score, build the audit pack, and download the verified JSON file.
 
 ## A few choices we made
 

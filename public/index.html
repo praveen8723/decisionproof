@@ -4,11 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="DecisionProof creates independently verifiable receipts for digital loan decisions using the CooL SDK.">
+  <meta name="theme-color" content="#0a0b10">
+  <meta property="og:title" content="DecisionProof · Verifiable loan decisions">
+  <meta property="og:description" content="Tamper-evident, privacy-preserving evidence for digital lending decisions, powered by the CooL SDK.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://decisionproof-team-alpha.netlify.app/">
   <title>DecisionProof · Verifiable loan decisions</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="/fonts/SpaceGrotesk-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+  <a class="skip-link" href="#decision-studio">Skip to decision studio</a>
   <header class="site-header">
     <a class="wordmark" href="#decision-studio" aria-label="DecisionProof home">
       <span class="wordmark-mark">DP</span>
@@ -66,7 +73,7 @@
           </div>
           <div class="proof-node" data-stage="verify">
             <span class="node-icon icon icon-scan"></span>
-            <b>Verify</b><small>offline result</small>
+            <b>Verify</b><small>self-contained</small>
           </div>
         </div>
         <div class="engine-footer">
@@ -74,6 +81,24 @@
           <strong>SDK v3.0.0</strong>
         </div>
       </div>
+    </section>
+
+    <section class="proof-principles reveal-section" aria-label="Why DecisionProof matters">
+      <article>
+        <span>01 · INTEGRITY</span>
+        <strong>Tampering becomes visible.</strong>
+        <p>Change one protected byte and the receipt no longer verifies.</p>
+      </article>
+      <article>
+        <span>02 · PRIVACY</span>
+        <strong>Evidence without exposure.</strong>
+        <p>Salted commitments replace raw applicant details in the receipt.</p>
+      </article>
+      <article>
+        <span>03 · PORTABILITY</span>
+        <strong>The proof travels.</strong>
+        <p>Export a self-contained receipt or an auditor-ready evidence pack.</p>
+      </article>
     </section>
 
     <section id="decision-studio" class="decision-studio reveal-section">
@@ -120,7 +145,7 @@
             <div class="score-module">
               <div class="score-heading">
                 <div><span>Credit score</span><strong id="risk-tier">LOW RISK BAND</strong></div>
-                <output id="credit-score-value" for="credit-score">748</output>
+                <output id="credit-score-value" for="credit-score" aria-live="polite">748</output>
               </div>
               <input id="credit-score" name="creditScore" type="range" min="300" max="900" value="748" aria-label="Credit score">
               <div id="risk-meter" class="risk-meter" data-risk="low">
@@ -130,7 +155,7 @@
             </div>
 
             <label class="consent-row">
-              <input name="consent" type="checkbox" checked>
+              <input name="consent" type="checkbox" checked required>
               <span class="custom-check"><span class="icon icon-check"></span></span>
               <span><strong>Explicit consent captured</strong><small>Required before the assessment and evidence receipt are created.</small></span>
             </label>
@@ -184,9 +209,10 @@
             </div>
 
             <div class="receipt-actions">
-              <button id="verify-button" class="action-button"><span class="icon icon-scan"></span>Verify receipt</button>
-              <button id="disclose-button" class="action-button"><span class="icon icon-eye"></span>Reveal outcome</button>
-              <button id="tamper-button" class="action-button danger"><span class="icon icon-shield"></span>Alter a copy</button>
+              <button id="verify-button" class="action-button" type="button"><span class="icon icon-scan"></span>Verify receipt</button>
+              <button id="download-receipt-button" class="action-button" type="button"><span class="icon icon-package-check"></span>Download receipt</button>
+              <button id="disclose-button" class="action-button" type="button"><span class="icon icon-eye"></span>Reveal outcome</button>
+              <button id="tamper-button" class="action-button danger" type="button"><span class="icon icon-shield"></span>Alter a copy</button>
             </div>
           </div>
         </article>
@@ -256,7 +282,7 @@
       </div>
       <div class="audit-action">
         <div class="audit-action-buttons">
-          <button id="audit-button" class="audit-button"><span class="icon icon-package"></span>Build audit pack</button>
+          <button id="audit-button" class="audit-button" type="button"><span class="icon icon-package"></span>Build audit pack</button>
           <button id="download-audit-button" class="download-audit-button hidden" type="button"><span class="icon icon-package-check"></span>Download .JSON</button>
         </div>
         <p id="audit-result">Create at least one decision first.</p>
@@ -276,7 +302,7 @@
     <span>Built with CooL SDK v3.0.0</span>
   </footer>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
   <script type="module" src="/app.js"></script>
 </body>
 </html>

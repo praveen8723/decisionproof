@@ -36,6 +36,10 @@ button, input { font: inherit; }
 button { cursor: pointer; }
 a { color: inherit; }
 .hidden { display: none !important; }
+.skip-link { position: fixed; top: 10px; left: 10px; z-index: 100; padding: 10px 13px; color: var(--ink); background: var(--lime); font-size: 0.75rem; font-weight: 650; text-decoration: none; transform: translateY(-160%); transition: transform var(--productive); }
+.skip-link:focus { transform: translateY(0); }
+:where(a, button, input):focus-visible { outline: 3px solid var(--violet); outline-offset: 3px; }
+.site-header :where(a, button):focus-visible, .receipt-surface button:focus-visible { outline-color: var(--lime); }
 
 .icon {
   display: inline-block;
@@ -162,6 +166,13 @@ main { width: 100%; }
 .engine-footer { color: #5d6069; border-top: 1px solid var(--line-dark); font-family: "Cascadia Code", Consolas, monospace; font-size: 0.55rem; letter-spacing: 0.06em; }
 .engine-footer strong { color: var(--violet); font-weight: 700; }
 
+.proof-principles { padding: 0 clamp(24px, 6vw, 96px); display: grid; grid-template-columns: repeat(3, 1fr); background: var(--paper); border-bottom: 1px solid var(--line); }
+.proof-principles article { min-height: 178px; padding: 34px clamp(20px, 3vw, 42px); border-right: 1px solid var(--line); }
+.proof-principles article:first-child { border-left: 1px solid var(--line); }
+.proof-principles span { display: block; margin-bottom: 17px; color: var(--violet); font-size: 0.59rem; font-weight: 700; letter-spacing: 0.13em; }
+.proof-principles strong { display: block; font-size: clamp(1.05rem, 1.6vw, 1.4rem); font-weight: 620; letter-spacing: -0.035em; }
+.proof-principles p { max-width: 350px; margin: 10px 0 0; color: var(--muted); font-size: 0.78rem; line-height: 1.5; }
+
 .decision-studio { padding: 92px clamp(24px, 6vw, 96px) 104px; scroll-margin-top: 74px; background: var(--paper); }
 .studio-heading { max-width: 1400px; margin: 0 auto 34px; display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; }
 .section-index { display: inline-block; margin-bottom: 12px; color: var(--violet); }
@@ -218,6 +229,7 @@ input[type="range"] { width: 100%; height: 18px; margin: 18px 0 5px; accent-colo
 .consent-row input { position: absolute; opacity: 0; pointer-events: none; }
 .custom-check { width: 22px; height: 22px; display: grid; place-items: center; color: transparent; background: var(--white); border: 1px solid #aaa8a0; transition: background var(--productive), color var(--productive); }
 .custom-check .icon { width: 13px; height: 13px; }
+.consent-row input:focus-visible + .custom-check { outline: 3px solid var(--violet); outline-offset: 3px; }
 .consent-row input:checked + .custom-check { color: var(--ink); background: var(--lime); border-color: var(--ink); }
 .consent-row strong, .consent-row small { display: block; }
 .consent-row strong { color: var(--ink); font-size: 0.84rem; }
@@ -267,7 +279,7 @@ button:disabled { cursor: wait; opacity: 0.58; transform: none !important; }
 .receipt-actions { margin-top: 13px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: #3b3d45; }
 .action-button { min-height: 44px; padding: 0 13px; display: flex; align-items: center; justify-content: center; gap: 8px; color: #d9dae0; background: #20222a; font-size: 0.78rem; }
 .action-button:hover { color: var(--ink); background: var(--lime); }
-.action-button.danger { grid-column: 1 / -1; color: #ff9bad; }
+.action-button.danger { color: #ff9bad; }
 .action-button.danger:hover { color: var(--white); background: #6d2634; }
 
 .history-section { min-height: 610px; padding: 82px clamp(24px, 6vw, 96px); scroll-margin-top: 74px; display: grid; grid-template-columns: minmax(300px, 0.72fr) minmax(520px, 1.28fr); gap: clamp(45px, 7vw, 110px); align-items: start; color: var(--white); background: #151824; }
@@ -401,6 +413,9 @@ footer > span { text-align: right; }
 @media (max-width: 850px) {
   .site-header { grid-template-columns: 1fr auto; }
   .site-header nav { display: none; }
+  .proof-principles { grid-template-columns: 1fr; }
+  .proof-principles article { min-height: 0; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .proof-principles article:last-child { border-bottom: 0; }
   .studio-grid, .history-section, .verification-section { grid-template-columns: 1fr; }
   .history-intro { position: static; }
   .receipt-surface { min-height: 600px; }
@@ -418,6 +433,8 @@ footer > span { text-align: right; }
   .site-header { height: 66px; padding: 0 16px; }
   .wordmark small, .sdk-status { display: none; }
   .hero-stage { min-height: auto; padding: 58px 18px 50px; gap: 44px; }
+  .proof-principles { padding: 0 18px; }
+  .proof-principles article { padding: 27px 20px; }
   .hero-copy h1 { font-size: clamp(2.7rem, 13.2vw, 4rem); }
   .proof-flow { min-height: 370px; padding: 35px 24px; grid-template-columns: 1fr; gap: 14px; }
   .proof-node { display: grid; grid-template-columns: 40px 1fr; column-gap: 17px; text-align: left; }

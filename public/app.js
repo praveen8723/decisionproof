@@ -17,6 +17,7 @@ const toast = document.querySelector("#toast");
 const auditResult = document.querySelector("#audit-result");
 const auditSection = document.querySelector("#audit-section");
 const auditDownloadButton = document.querySelector("#download-audit-button");
+const receiptDownloadButton = document.querySelector("#download-receipt-button");
 const historyList = document.querySelector("#history-list");
 const historyEmpty = document.querySelector("#history-empty");
 const historyCount = document.querySelector("#history-count");
@@ -125,6 +126,18 @@ function setBusy(button, busy, label) {
 function short(value, start = 16, end = 10) {
   if (!value || value.length <= start + end + 1) return value;
   return `${value.slice(0, start)}…${value.slice(-end)}`;
+}
+
+function downloadJson(value, filename) {
+  const blob = new Blob([JSON.stringify(value, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function saveHistory() {
@@ -322,6 +335,15 @@ document.querySelector("#verify-button").addEventListener("click", async (event)
   }
 });
 
+receiptDownloadButton.addEventListener("click", () => {
+  if (!activeArtifact?.evidence || !activeRecordId) {
+    showToast("Create a decision before downloading its receipt.", "error");
+    return;
+  }
+  downloadJson(activeArtifact.evidence, `decisionproof-receipt-${activeRecordId}.json`);
+  showToast("Self-contained receipt downloaded as JSON.");
+});
+
 document.querySelector("#tamper-button").addEventListener("click", async (event) => {
   const button = event.currentTarget;
   setBusy(button, true, "Changing one byte…");
@@ -371,7 +393,10 @@ document.querySelector("#audit-button").addEventListener("click", async (event) 
       summary: result.verdict,
       auditPack: result.pack,
     };
-    auditResult.textContent = `${result.verdict.verified}/${result.verdict.total} receipts verified · ${result.verdict.obligationsCovered}/${result.verdict.obligationsTotal} mapped controls covered.`;
+    const assuranceNote = result.verdict.obligationsCovered < result.verdict.obligationsTotal
+      ? " Simulator mode intentionally leaves hardware, witness, and public-anchor controls open."
+      : " All mapped controls are covered.";
+    auditResult.textContent = `${result.verdict.verified}/${result.verdict.total} receipts verified · ${result.verdict.obligationsCovered}/${result.verdict.obligationsTotal} mapped controls covered.${assuranceNote}`;
     auditSection.classList.add("is-complete");
     auditDownloadButton.classList.remove("hidden");
     showToast("Audit pack built and independently verified.");
@@ -388,15 +413,7 @@ auditDownloadButton.addEventListener("click", () => {
     showToast("Build the audit pack before downloading it.", "error");
     return;
   }
-  const blob = new Blob([JSON.stringify(latestAuditExport, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
   const timestamp = latestAuditExport.generatedAt.replace(/[:.]/g, "-");
-  link.href = url;
-  link.download = `decisionproof-audit-pack-${timestamp}.json`;
-  document.body.append(link);
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  downloadJson(latestAuditExport, `decisionproof-audit-pack-${timestamp}.json`);
   showToast("Audit pack downloaded as JSON.");
 });
