@@ -4,6 +4,8 @@ DecisionProof gives a digital lending decision a receipt that can be checked lat
 
 We built it for Round 2 of the Reverse Hackathon using the CooL SDK. We are **Team Alpha: Praveen H, Sahana S, and Shubha S.**
 
+Try the working demo: [decisionproof-team-alpha.netlify.app](https://decisionproof-team-alpha.netlify.app)
+
 ## The problem we picked
 
 Most lending apps can tell someone whether an application was approved or declined. The harder question comes weeks or months later: *Which policy ran? Which version of the software made the call? Was the record changed after the fact?*
@@ -119,7 +121,7 @@ The next version would run the evidence service inside a Phala dstack confidenti
 
 ## Deploying
 
-The project is ready for Netlify. Import this repository, and Netlify will read the publish and function settings from `netlify.toml`. You can also deploy it from the command line:
+The live demo is hosted on Netlify. New commits to `main` are deployed automatically, and Netlify reads the publish and function settings from `netlify.toml`. You can also deploy it from the command line:
 
 ```bash
 netlify deploy --prod
