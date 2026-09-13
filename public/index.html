@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="DecisionProof creates independently verifiable receipts for digital loan decisions using the CooL SDK.">
+  <title>DecisionProof · Verifiable loan decisions</title>
+  <link rel="preload" href="/fonts/SpaceGrotesk-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="wordmark" href="#decision-studio" aria-label="DecisionProof home">
+      <span class="wordmark-mark">DP</span>
+      <span><strong>DecisionProof</strong><small>Evidence for every decision</small></span>
+    </a>
+    <nav aria-label="Page sections">
+      <a href="#decision-studio">Decision</a>
+      <a href="#verification-section">Verification</a>
+      <a href="#audit-section">Audit pack</a>
+    </nav>
+    <div class="header-end">
+      <span class="sdk-status" aria-label="CooL SDK proof link active">
+        <span class="cool-link-mark" aria-hidden="true"><i></i><i></i></span>
+        <span class="cool-link-copy"><small>CooL SDK</small><strong>PROOF LINK</strong></span>
+      </span>
+      <span class="team-name">Team Alpha</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-stage">
+      <div class="hero-copy">
+        <span class="overline">ROUND 2 · WORKING PROTOTYPE</span>
+        <h1>One loan decision.<br><em>A trail anyone can check.</em></h1>
+        <p>DecisionProof seals the software, policy and decision record when the event happens. The applicant’s raw data stays outside the receipt.</p>
+        <div class="hero-meta">
+          <span><b>01</b> Run policy</span>
+          <span><b>02</b> Seal evidence</span>
+          <span><b>03</b> Verify elsewhere</span>
+        </div>
+      </div>
+
+      <div class="proof-engine" aria-label="CooL evidence lifecycle">
+        <div class="engine-top">
+          <span class="engine-label">LIVE EVIDENCE PATH</span>
+          <span class="engine-runtime"><i></i>SIMULATED TEE</span>
+        </div>
+        <div id="proof-flow" class="proof-flow">
+          <div class="proof-node active" data-stage="observe">
+            <span class="node-icon icon icon-gauge"></span>
+            <b>Observe</b><small>loan.decision</small>
+          </div>
+          <div class="proof-node" data-stage="commit">
+            <span class="node-icon icon icon-lock"></span>
+            <b>Commit</b><small>salted hashes</small>
+          </div>
+          <div class="proof-node" data-stage="sign">
+            <span class="node-icon icon icon-shield"></span>
+            <b>Sign</b><small>hybrid proof</small>
+          </div>
+          <div class="proof-node" data-stage="verify">
+            <span class="node-icon icon icon-scan"></span>
+            <b>Verify</b><small>offline result</small>
+          </div>
+        </div>
+        <div class="engine-footer">
+          <span>OBSERVE → COMMIT → SIGN → ATTEST → VERIFY</span>
+          <strong>SDK v3.0.0</strong>
+        </div>
+      </div>
+    </section>
+
+    <section id="decision-studio" class="decision-studio reveal-section">
+      <div class="studio-heading">
+        <div>
+          <span class="section-index">01</span>
+          <p class="section-kicker">DECISION STUDIO</p>
+          <h2>Run the lending policy</h2>
+        </div>
+        <div class="session-counter"><span>Receipts this session</span><strong id="session-count">0</strong></div>
+      </div>
+
+      <div class="studio-grid">
+        <article class="application-surface">
+          <div class="surface-header">
+            <div class="surface-title">
+              <span class="surface-icon icon icon-gauge"></span>
+              <div><strong>Application inputs</strong><small>Transparent demo scorecard</small></div>
+            </div>
+            <span class="policy-chip">Policy 2026-09</span>
+          </div>
+
+          <form id="loan-form">
+            <div class="form-grid two">
+              <label>Applicant name
+                <input name="applicantName" value="Ananya Rao" autocomplete="name" required>
+              </label>
+              <label>Email address
+                <input name="email" type="email" value="ananya@example.com" autocomplete="email" required>
+              </label>
+            </div>
+            <div class="form-grid three">
+              <label>Requested amount
+                <span class="money-input"><b>₹</b><input name="requestedAmount" type="number" min="10000" max="5000000" step="1000" value="450000" required></span>
+              </label>
+              <label>Monthly income
+                <span class="money-input"><b>₹</b><input name="monthlyIncome" type="number" min="10000" max="2000000" step="1000" value="85000" required></span>
+              </label>
+              <label>Existing EMI
+                <span class="money-input"><b>₹</b><input name="existingEmi" type="number" min="0" max="1500000" step="500" value="12000" required></span>
+              </label>
+            </div>
+
+            <div class="score-module">
+              <div class="score-heading">
+                <div><span>Credit score</span><strong id="risk-tier">LOW RISK BAND</strong></div>
+                <output id="credit-score-value" for="credit-score">748</output>
+              </div>
+              <input id="credit-score" name="creditScore" type="range" min="300" max="900" value="748" aria-label="Credit score">
+              <div id="risk-meter" class="risk-meter" data-risk="low">
+                <span class="risk-zone high"></span><span class="risk-zone medium"></span><span class="risk-zone low"></span>
+                <i class="risk-marker"></i>
+              </div>
+              <div class="risk-scale"><span>300</span><span>600</span><span>650</span><span>720</span><span>900</span></div>
+            </div>
+
+            <label class="consent-row">
+              <input name="consent" type="checkbox" checked>
+              <span class="custom-check"><span class="icon icon-check"></span></span>
+              <span><strong>Explicit consent captured</strong><small>Required before the assessment and evidence receipt are created.</small></span>
+            </label>
+
+            <div class="form-action-row">
+              <p>Sample policy only. This is not a lending offer.</p>
+              <button class="primary-button" type="submit">
+                <span>Run decision</span><span class="icon icon-arrow"></span>
+              </button>
+            </div>
+          </form>
+        </article>
+
+        <article class="receipt-surface" aria-live="polite">
+          <div class="receipt-header">
+            <div class="surface-title dark">
+              <span class="surface-icon icon icon-shield"></span>
+              <div><strong>Decision receipt</strong><small>Self-contained CooL evidence</small></div>
+            </div>
+            <span id="receipt-state" class="receipt-state waiting"><i></i>Waiting</span>
+          </div>
+
+          <div id="empty-state" class="receipt-empty">
+            <div class="receipt-scanner" aria-hidden="true">
+              <span class="document-lines"><b></b><b></b><b></b></span>
+              <span class="icon icon-scan"></span>
+              <i></i>
+            </div>
+            <h3>Ready to seal</h3>
+            <p>The signed receipt appears here as soon as the decision is made.</p>
+            <div class="empty-fields"><span></span><span></span><span></span></div>
+          </div>
+
+          <div id="receipt-view" class="receipt-view hidden">
+            <div id="decision-banner" class="decision-banner">
+              <div><span class="decision-label">Policy result</span><strong id="decision-value">APPROVED</strong></div>
+              <span id="decision-detail"></span>
+            </div>
+
+            <dl class="receipt-facts">
+              <div><dt>Record ID</dt><dd id="record-id"></dd></div>
+              <div><dt>Model</dt><dd id="model-version"></dd></div>
+              <div><dt>Policy</dt><dd id="policy-version"></dd></div>
+              <div><dt>Runtime</dt><dd><span class="mode-dot"></span><span id="runtime-mode"></span></dd></div>
+            </dl>
+
+            <div class="privacy-proof">
+              <span class="privacy-icon icon icon-lock"></span>
+              <div><strong>No raw applicant details</strong><p>The receipt carries salted commitments, not names, email or payloads.</p></div>
+              <span id="privacy-status">Checked</span>
+            </div>
+
+            <div class="receipt-actions">
+              <button id="verify-button" class="action-button"><span class="icon icon-scan"></span>Verify receipt</button>
+              <button id="disclose-button" class="action-button"><span class="icon icon-eye"></span>Reveal outcome</button>
+              <button id="tamper-button" class="action-button danger"><span class="icon icon-shield"></span>Alter a copy</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="verification-section" class="verification-section hidden">
+      <div class="verifier-intro">
+        <span class="section-index light">02</span>
+        <p class="section-kicker light">INDEPENDENT VERIFIER</p>
+        <h2 id="verification-title">Receipt verified</h2>
+        <p id="verification-copy">The verifier checked the receipt from its own bytes.</p>
+        <div class="verification-mark" aria-hidden="true">
+          <span class="orbit one"></span><span class="orbit two"></span>
+          <span class="mark-core icon icon-check"></span>
+        </div>
+      </div>
+      <div class="verifier-results">
+        <div class="result-bar"><span>TRUST DOMAINS</span><strong>7 independent checks</strong></div>
+        <div id="checks-grid" class="checks-grid"></div>
+        <div id="failure-reasons" class="failure-reasons hidden"></div>
+      </div>
+    </section>
+
+    <section id="audit-section" class="audit-section reveal-section">
+      <div class="audit-visual" aria-hidden="true">
+        <div class="file-stack back"><span></span><span></span></div>
+        <div class="file-stack middle"><span></span><span></span><span></span></div>
+        <div class="file-stack front">
+          <span class="icon icon-package"></span>
+          <strong>AUDIT<br>PACK</strong>
+          <small>cool.audit-pack.v2</small>
+        </div>
+        <div class="pack-seal"><span class="icon icon-check"></span></div>
+      </div>
+      <div class="audit-copy">
+        <span class="section-index">03</span>
+        <p class="section-kicker">AUDITOR HANDOFF</p>
+        <h2>One file. Every receipt. Independently checked.</h2>
+        <p>Package the decisions from this session with the keys and proofs an external reviewer needs.</p>
+        <div class="audit-points">
+          <span><i class="icon icon-package-check"></i>Receipt bundle</span>
+          <span><i class="icon icon-shield"></i>Verification summary</span>
+          <span><i class="icon icon-server"></i>Control mapping</span>
+        </div>
+      </div>
+      <div class="audit-action">
+        <button id="audit-button" class="audit-button"><span class="icon icon-package"></span>Build audit pack</button>
+        <p id="audit-result">Create at least one decision first.</p>
+      </div>
+    </section>
+
+    <section id="scope" class="scope-section reveal-section">
+      <div class="scope-icon icon icon-info"></div>
+      <div><span>PRODUCT BOUNDARY</span><strong>Proof of execution is not proof of fairness.</strong></div>
+      <p>DecisionProof shows what software recorded and whether the receipt changed. Judging whether the lending policy is fair or correct remains a separate responsibility. Hardware claims require a real dstack deployment.</p>
+    </section>
+  </main>
+
+  <footer>
+    <div><span class="wordmark-mark small">DP</span><strong>DecisionProof</strong></div>
+    <p>Team Alpha · Praveen H · Sahana S · Shubha S</p>
+    <span>Built with CooL SDK v3.0.0</span>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
