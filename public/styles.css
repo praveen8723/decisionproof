@@ -176,9 +176,9 @@ main { width: 100%; }
 
 .proof-ticker { min-height: 54px; display: flex; align-items: center; overflow: hidden; color: var(--ink); background: var(--lime); border-top: 1px solid rgba(10, 11, 16, 0.35); border-bottom: 1px solid rgba(10, 11, 16, 0.35); }
 .ticker-track { width: max-content; display: flex; flex: 0 0 auto; animation: ticker-flow 24s linear infinite; will-change: transform; }
-.ticker-group { min-width: 100vw; display: flex; flex: 0 0 auto; align-items: center; justify-content: space-around; }
-.ticker-group span { padding: 0 32px; display: inline-flex; align-items: center; gap: 32px; font-size: 0.64rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; white-space: nowrap; }
-.ticker-group span::after { content: "✦"; color: var(--violet); font-size: 0.8rem; }
+.ticker-group { min-width: 100vw; display: flex; flex: 0 0 auto; align-items: center; }
+.ticker-label { flex: 0 0 auto; font-size: 0.64rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; white-space: nowrap; }
+.ticker-separator { min-width: 64px; display: flex; flex: 1 0 64px; align-items: center; justify-content: center; color: var(--violet); font-size: 0.95rem; line-height: 1; }
 .proof-ticker:hover .ticker-track { animation-play-state: paused; }
 
 .proof-principles { padding: 0 clamp(24px, 6vw, 96px); display: grid; grid-template-columns: repeat(3, 1fr); background: var(--paper); border-bottom: 1px solid var(--line); }
@@ -464,7 +464,7 @@ footer > span { text-align: right; }
   .hero-stage { min-height: auto; padding: 58px 18px 50px; gap: 44px; }
   .proof-principles { padding: 0 18px; }
   .proof-principles article { padding: 27px 20px; }
-  .ticker-group span { padding: 0 22px; gap: 22px; }
+  .ticker-separator { min-width: 44px; flex-basis: 44px; }
   .hero-copy h1 { font-size: clamp(2.7rem, 13.2vw, 4rem); }
   .proof-flow { min-height: 370px; padding: 35px 24px; grid-template-columns: 1fr; gap: 14px; }
   .proof-node { display: grid; grid-template-columns: 40px 1fr; column-gap: 17px; text-align: left; }
