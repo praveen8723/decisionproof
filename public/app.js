@@ -51,6 +51,104 @@ function resetProofStages() {
   });
 }
 
+function initProofEngineMotion() {
+  const engine = document.querySelector(".proof-engine");
+  if (!engine) return;
+
+  const desktopQuery = window.matchMedia("(min-width: 1121px)");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  let frameId = null;
+  let hovering = false;
+  let targetX = 0;
+  let targetY = 0;
+  let currentX = 0;
+  let currentY = 0;
+  let startedAt = performance.now();
+
+  const FLOAT_AMPLITUDE = 7;
+  const FLOAT_SPEED = 0.00115;
+  const MAX_OFFSET = 18;
+  const FOLLOW = 0.1;
+  const RETURN = 0.07;
+
+  function resetTransform() {
+    engine.style.transform = "";
+    engine.classList.remove("is-hovering");
+    currentX = 0;
+    currentY = 0;
+    targetX = 0;
+    targetY = 0;
+  }
+
+  function tick(now) {
+    if (!desktopQuery.matches || reducedMotion.matches) {
+      resetTransform();
+      frameId = null;
+      return;
+    }
+
+    const floatY = Math.sin((now - startedAt) * FLOAT_SPEED) * FLOAT_AMPLITUDE;
+    const ease = hovering ? FOLLOW : RETURN;
+
+    currentX += (targetX - currentX) * ease;
+    currentY += (targetY - currentY) * ease;
+
+    const tiltX = currentY * -0.045;
+    const tiltY = currentX * 0.045;
+
+    engine.style.transform = `translate3d(${currentX.toFixed(2)}px, ${(floatY + currentY).toFixed(2)}px, 0) rotateX(${tiltX.toFixed(3)}deg) rotateY(${tiltY.toFixed(3)}deg)`;
+    frameId = requestAnimationFrame(tick);
+  }
+
+  function ensureLoop() {
+    if (frameId === null) frameId = requestAnimationFrame(tick);
+  }
+
+  function onPointerMove(event) {
+    if (!desktopQuery.matches || reducedMotion.matches) return;
+
+    const rect = engine.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const nx = (event.clientX - centerX) / (rect.width / 2);
+    const ny = (event.clientY - centerY) / (rect.height / 2);
+
+    targetX = Math.max(-MAX_OFFSET, Math.min(MAX_OFFSET, nx * MAX_OFFSET));
+    targetY = Math.max(-MAX_OFFSET, Math.min(MAX_OFFSET, ny * MAX_OFFSET));
+  }
+
+  engine.addEventListener("mouseenter", () => {
+    hovering = true;
+    engine.classList.add("is-hovering");
+    ensureLoop();
+  });
+
+  engine.addEventListener("mouseleave", () => {
+    hovering = false;
+    targetX = 0;
+    targetY = 0;
+    engine.classList.remove("is-hovering");
+    ensureLoop();
+  });
+
+  engine.addEventListener("mousemove", onPointerMove);
+
+  const onMotionPreferenceChange = () => {
+    if (desktopQuery.matches && !reducedMotion.matches) ensureLoop();
+    else {
+      cancelAnimationFrame(frameId);
+      frameId = null;
+      resetTransform();
+    }
+  };
+
+  desktopQuery.addEventListener("change", onMotionPreferenceChange);
+  reducedMotion.addEventListener("change", onMotionPreferenceChange);
+
+  if (desktopQuery.matches && !reducedMotion.matches) ensureLoop();
+}
+
 function startProofSequence({ loop = true } = {}) {
   stopProofSequence();
   resetProofStages();
@@ -336,6 +434,7 @@ form.addEventListener("submit", async (event) => {
 
 if (sessionDecisions[0]) renderReceipt(sessionDecisions[0].result, { remember: false });
 renderHistory();
+initProofEngineMotion();
 startProofSequence();
 
 document.querySelector("#verify-button").addEventListener("click", async (event) => {
