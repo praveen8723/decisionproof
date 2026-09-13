@@ -193,9 +193,27 @@
       </div>
     </section>
 
+    <section id="verification-section" class="verification-section hidden">
+      <div class="verifier-intro">
+        <span class="section-index light">02</span>
+        <p class="section-kicker light">INDEPENDENT VERIFIER</p>
+        <h2 id="verification-title">Receipt verified</h2>
+        <p id="verification-copy">The verifier checked the receipt from its own bytes.</p>
+        <div class="verification-mark" aria-hidden="true">
+          <span class="orbit one"></span><span class="orbit two"></span>
+          <span class="mark-core icon icon-check"></span>
+        </div>
+      </div>
+      <div class="verifier-results">
+        <div class="result-bar"><span>TRUST DOMAINS</span><strong>7 independent checks</strong></div>
+        <div id="checks-grid" class="checks-grid"></div>
+        <div id="failure-reasons" class="failure-reasons hidden"></div>
+      </div>
+    </section>
+
     <section id="history-section" class="history-section reveal-section">
       <div class="history-intro">
-        <span class="section-index light">02</span>
+        <span class="section-index light">03</span>
         <p class="section-kicker light">DECISION HISTORY</p>
         <h2>The receipts from this run,<br>kept in one place.</h2>
         <p>Each entry points back to its signed evidence. Reopen any decision without running the policy again.</p>
@@ -211,24 +229,6 @@
           <div><strong>No decisions yet</strong><p>Run the scorecard above and its receipt will appear here.</p></div>
         </div>
         <div id="history-list" class="history-list" role="list" aria-live="polite"></div>
-      </div>
-    </section>
-
-    <section id="verification-section" class="verification-section hidden">
-      <div class="verifier-intro">
-        <span class="section-index light">03</span>
-        <p class="section-kicker light">INDEPENDENT VERIFIER</p>
-        <h2 id="verification-title">Receipt verified</h2>
-        <p id="verification-copy">The verifier checked the receipt from its own bytes.</p>
-        <div class="verification-mark" aria-hidden="true">
-          <span class="orbit one"></span><span class="orbit two"></span>
-          <span class="mark-core icon icon-check"></span>
-        </div>
-      </div>
-      <div class="verifier-results">
-        <div class="result-bar"><span>TRUST DOMAINS</span><strong>7 independent checks</strong></div>
-        <div id="checks-grid" class="checks-grid"></div>
-        <div id="failure-reasons" class="failure-reasons hidden"></div>
       </div>
     </section>
 
