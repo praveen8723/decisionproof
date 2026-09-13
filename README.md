@@ -27,13 +27,99 @@ From there, you can:
 
 We kept the lending rule simple on purpose. The interesting part of this project is not a mystery scoring model. It is the proof around the decision.
 
-## Where CooL fits
+## Why the CooL SDK is important
+
+A lending decision is easy to display, but much harder to prove later. A normal database row or
+application log remains under the lender's control: it can be edited, deleted, or exported without
+enough context to show which code and policy produced it. That means a borrower, auditor, or
+compliance reviewer must trust the same organization whose decision is being examined.
+
+CooL changes the evidence model. Instead of merely saving a result, it creates a portable,
+cryptographically protected receipt at the moment of the decision.
+
+| CooL capability | Why it matters to DecisionProof |
+| --- | --- |
+| Salted commitments | The application can prove that a later disclosure matches the original input or output without placing that private data in the receipt |
+| Hybrid ML-DSA-65 + Ed25519 signatures | A changed receipt no longer verifies, making tampering detectable |
+| Software, model, and policy identity | Reviewers can see which declared versions were associated with the decision |
+| RFC 6962 transparency-log proof | The receipt proves its digest was included in an append-only Merkle tree |
+| Offline verification | A reviewer can check the receipt from its own bytes instead of asking the lender's database whether it is genuine |
+| TEE attestation support | A production deployment can bind the signing key to a measured confidential workload |
+| Selective disclosure and audit packs | The same evidence can support a focused dispute or a batch compliance review |
+
+This makes CooL the trust layer of the project, not just a logging dependency. DecisionProof still
+owns the lending rule and user experience; CooL makes the evidence around their execution
+independently checkable. It proves that the recorded artifact is internally consistent and has not
+been changed. It does not prove that the lending policy itself is fair, legal, or correct.
+
+## How DecisionProof works with CooL
 
 The decision API calls `cool.record()` with the execution ID, event type, policy and model versions, result metadata, software identity, and the private input and output payloads.
 
 The returned receipt contains commitments to those payloads, not their plaintext. CooL then lets the app check the hybrid signatures, record binding, and transparency-log inclusion without asking the lender's database whether the receipt is genuine.
 
 We also use CooL's selective disclosure and audit-pack APIs. If CooL were removed, the core of DecisionProof would disappear; all that would remain is a normal loan form and an ordinary application log.
+
+### Architecture
+
+```mermaid
+flowchart LR
+    subgraph Client[Browser]
+        Form[Loan application and consent]
+        Results[Decision and evidence viewer]
+        Session[Session receipt collection]
+    end
+
+    subgraph App[DecisionProof API]
+        API[Netlify Function or local server]
+        Policy[Readable loan scorecard]
+        Adapter[CooL integration]
+    end
+
+    subgraph Cool[CooL evidence plane]
+        Commit[Salted commitments]
+        Bind[Canonical record binding]
+        Sign[Hybrid signature]
+        Log[RFC 6962 transparency log]
+    end
+
+    Verify[Independent verifier]
+    Audit[Selective disclosure and audit pack]
+
+    Form --> API
+    API --> Policy
+    Policy -->|decision and reason codes| Adapter
+    Adapter --> Commit --> Bind --> Sign --> Log
+    Log -->|self-contained receipt| API
+    API --> Results
+    Results --> Session
+    Session --> Verify
+    Session --> Audit
+```
+
+The architecture keeps the responsibilities separate:
+
+1. **The browser collects consent and application data.** It sends one decision request and keeps
+   the returned receipts for the current session.
+2. **The DecisionProof API runs the policy.** The scorecard produces an outcome and reason codes;
+   CooL does not make or judge the lending decision.
+3. **The API records the event.** It passes the execution ID, policy and model versions, software
+   identity, result metadata, and private payloads to `cool.record()`.
+4. **CooL commits, binds, signs, and logs.** Private values become salted hashes, the complete
+   record is deterministically bound, the binding is signed, and its digest is added to the
+   transparency log.
+5. **The receipt returns with the response.** It contains commitments and verification material,
+   not the applicant's raw name, email, or full application.
+6. **Verification is independent.** The verifier recomputes the binding, signature, and log proof
+   from the receipt bytes. Changing even one protected value causes the relevant checks to fail.
+7. **The same receipts support controlled review.** A user can disclose only the outcome or combine
+   multiple receipts into a verifiable audit pack.
+
+This demo uses CooL's explicitly labelled simulator, so the cryptographic binding, signatures, and
+transparency proof are real while hardware-backed attestation is reported as `simulated`. In a
+production architecture, the CooL evidence plane would run inside a Phala dstack confidential VM,
+with a pinned workload measurement and a signing key derived inside the trusted execution
+environment.
 
 ## Follow one decision through the app
 
