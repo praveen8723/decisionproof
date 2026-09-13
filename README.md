@@ -88,7 +88,7 @@ npm test
 
 The test makes a decision, verifies it, rejects an altered copy, checks a selective disclosure, and verifies an audit pack.
 
-## A quick judge walkthrough
+## A quick walkthrough
 
 1. Submit the pre-filled application and watch the evidence path finish.
 2. Open the receipt and point out the policy, model, runtime mode, and privacy check.
