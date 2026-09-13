@@ -16,6 +16,7 @@ const failureReasons = document.querySelector("#failure-reasons");
 const toast = document.querySelector("#toast");
 const auditResult = document.querySelector("#audit-result");
 const auditSection = document.querySelector("#audit-section");
+const auditDownloadButton = document.querySelector("#download-audit-button");
 const historyList = document.querySelector("#history-list");
 const historyEmpty = document.querySelector("#history-empty");
 const historyCount = document.querySelector("#history-count");
@@ -36,6 +37,7 @@ const sessionDecisions = storedHistory;
 const sessionArtifacts = sessionDecisions.map((entry) => entry.result.artifact);
 let toastTimer = null;
 let proofTimers = [];
+let latestAuditExport = null;
 
 function stopProofSequence() {
   proofTimers.forEach((timer) => clearTimeout(timer));
@@ -138,6 +140,9 @@ function renderHistory() {
   historyEmpty.classList.toggle("hidden", sessionDecisions.length > 0);
   historyCount.textContent = `${sessionDecisions.length} ${sessionDecisions.length === 1 ? "entry" : "entries"}`;
   document.querySelector("#session-count").textContent = String(sessionDecisions.length);
+  if (sessionDecisions.length > 0 && !latestAuditExport) {
+    auditResult.textContent = "Ready to package the current session for an auditor.";
+  }
 
   sessionDecisions.forEach((entry, index) => {
     const { result, createdAt } = entry;
@@ -184,6 +189,10 @@ function renderReceipt(result, { remember = true } = {}) {
     sessionArtifacts.splice(12);
     saveHistory();
     renderHistory();
+    latestAuditExport = null;
+    auditDownloadButton.classList.add("hidden");
+    auditSection.classList.remove("is-complete");
+    auditResult.textContent = "Ready to package the current session for an auditor.";
   }
   receiptSurface.classList.add("has-receipt");
   emptyState.classList.add("hidden");
@@ -210,7 +219,6 @@ function renderReceipt(result, { remember = true } = {}) {
   const privacyOk = Object.values(result.receipt.privacy).every(Boolean);
   document.querySelector("#privacy-status").textContent = privacyOk ? "Checked" : "Review";
   renderVerification(result.receipt.verdict, "Receipt verified", "The receipt passed independent checks immediately after it was created.");
-  auditResult.textContent = "Ready to package this receipt for an auditor.";
 }
 
 historyList.addEventListener("click", (event) => {
@@ -354,8 +362,18 @@ document.querySelector("#audit-button").addEventListener("click", async (event) 
   auditSection.classList.add("is-building");
   try {
     const result = await api("/api?action=audit-pack", { artifacts: sessionArtifacts });
+    latestAuditExport = {
+      schema: "decisionproof.audit-export.v1",
+      generatedAt: new Date().toISOString(),
+      product: "DecisionProof",
+      team: ["Praveen H", "Sahana S", "Shubha S"],
+      sdk: "cool-nwc 3.0.0",
+      summary: result.verdict,
+      auditPack: result.pack,
+    };
     auditResult.textContent = `${result.verdict.verified}/${result.verdict.total} receipts verified · ${result.verdict.obligationsCovered}/${result.verdict.obligationsTotal} mapped controls covered.`;
     auditSection.classList.add("is-complete");
+    auditDownloadButton.classList.remove("hidden");
     showToast("Audit pack built and independently verified.");
   } catch (error) {
     showToast(error.message, "error");
@@ -363,4 +381,22 @@ document.querySelector("#audit-button").addEventListener("click", async (event) 
     auditSection.classList.remove("is-building");
     setBusy(button, false);
   }
+});
+
+auditDownloadButton.addEventListener("click", () => {
+  if (!latestAuditExport) {
+    showToast("Build the audit pack before downloading it.", "error");
+    return;
+  }
+  const blob = new Blob([JSON.stringify(latestAuditExport, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const timestamp = latestAuditExport.generatedAt.replace(/[:.]/g, "-");
+  link.href = url;
+  link.download = `decisionproof-audit-pack-${timestamp}.json`;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast("Audit pack downloaded as JSON.");
 });

@@ -349,8 +349,12 @@ button:disabled { cursor: wait; opacity: 0.58; transform: none !important; }
 .audit-points span { padding: 9px 11px; display: inline-flex; align-items: center; gap: 8px; color: #3e3a34; background: rgba(255,255,255,0.55); border: 1px solid rgba(10,11,16,0.14); font-size: 0.78rem; font-weight: 570; }
 .audit-points .icon { width: 15px; height: 15px; }
 .audit-action { min-width: 190px; text-align: right; }
-.audit-button { min-height: 52px; padding: 0 17px; display: inline-flex; align-items: center; gap: 10px; color: var(--white); background: var(--ink); font-size: 0.75rem; }
+.audit-action-buttons { display: inline-grid; gap: 7px; }
+.audit-button, .download-audit-button { min-height: 52px; padding: 0 17px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; border-radius: 0; font-size: 0.75rem; font-weight: 620; transition: color var(--productive), background var(--productive), transform var(--productive); }
+.audit-button { color: var(--white); background: var(--ink); border: 0; }
 .audit-button:hover { color: var(--ink); background: var(--lime); transform: translateY(-2px); }
+.download-audit-button { color: var(--ink); background: rgba(255,255,255,0.5); border: 1px solid var(--ink); }
+.download-audit-button:hover { color: var(--white); background: var(--violet); transform: translateY(-2px); }
 .audit-action p { margin: 12px 0 0 auto; max-width: 200px; color: #736b60; font-size: 0.65rem; line-height: 1.45; }
 
 .scope-section { padding: 35px clamp(24px, 6vw, 96px); display: grid; grid-template-columns: 36px minmax(220px, 0.72fr) minmax(450px, 1.28fr); gap: 24px; align-items: center; color: var(--white); background: var(--ink); border-top: 8px solid var(--lime); }
@@ -390,6 +394,7 @@ footer > span { text-align: right; }
   .history-section { grid-template-columns: 0.8fr 1.2fr; gap: 45px; }
   .audit-section { grid-template-columns: 0.72fr 1fr; }
   .audit-action { grid-column: 2; text-align: left; }
+  .audit-action-buttons { justify-items: start; }
   .audit-action p { margin-left: 0; }
 }
 
@@ -450,6 +455,8 @@ footer > span { text-align: right; }
   .audit-visual { width: 310px; max-width: 100%; margin: 0 auto; }
   .audit-action { grid-column: auto; }
   .audit-button { width: 100%; justify-content: center; }
+  .audit-action-buttons { width: 100%; }
+  .download-audit-button { width: 100%; }
   .audit-action p { max-width: none; text-align: center; }
   .scope-section { padding: 29px 18px; grid-template-columns: 28px 1fr; }
   .scope-section p { grid-column: 1 / -1; }

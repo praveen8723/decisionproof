@@ -23,7 +23,7 @@ From there, you can:
 - verify the receipt from its own bytes;
 - change one character in a copy and watch verification fail;
 - reveal only the committed decision output;
-- create more decisions and verify them together in an audit pack.
+- create more decisions, verify them together, and download the resulting audit pack as JSON.
 
 We kept the lending rule simple on purpose. The interesting part of this project is not a mystery scoring model. It is the proof around the decision.
 
@@ -95,7 +95,7 @@ The test makes a decision, verifies it, rejects an altered copy, checks a select
 3. Scroll to the independent verifier. Each trust domain reports its own result.
 4. Click **Alter a copy**. The binding and signature checks should fail while the original receipt stays untouched.
 5. Click **Reveal outcome** to prove that the disclosed result matches its earlier commitment.
-6. Make one more decision with a different credit score, then build the audit pack.
+6. Make one more decision with a different credit score, build the audit pack, and download the verified JSON file.
 
 ## A few choices we made
 
