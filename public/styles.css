@@ -176,7 +176,7 @@ main { width: 100%; }
 
 .proof-ticker { min-height: 54px; display: flex; align-items: center; overflow: hidden; color: var(--ink); background: var(--lime); border-top: 1px solid rgba(10, 11, 16, 0.35); border-bottom: 1px solid rgba(10, 11, 16, 0.35); }
 .ticker-track { width: max-content; display: flex; flex: 0 0 auto; animation: ticker-flow 24s linear infinite; will-change: transform; }
-.ticker-group { display: flex; flex: 0 0 auto; align-items: center; }
+.ticker-group { min-width: 100vw; display: flex; flex: 0 0 auto; align-items: center; justify-content: space-around; }
 .ticker-group span { padding: 0 32px; display: inline-flex; align-items: center; gap: 32px; font-size: 0.64rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; white-space: nowrap; }
 .ticker-group span::after { content: "✦"; color: var(--violet); font-size: 0.8rem; }
 .proof-ticker:hover .ticker-track { animation-play-state: paused; }
@@ -414,7 +414,7 @@ footer > span { text-align: right; }
 @keyframes headline-rise { from { opacity: 0; filter: blur(8px); transform: translateY(112%); } to { opacity: 1; filter: blur(0); transform: translateY(0); } }
 @keyframes soft-enter { from { opacity: 0; filter: blur(5px); transform: translateY(18px); } to { opacity: 1; filter: blur(0); transform: translateY(0); } }
 @keyframes accent-pan { 0%, 100% { background-position: 100% 50%; } 50% { background-position: 0 50%; } }
-@keyframes ticker-flow { to { transform: translateX(-50%); } }
+@keyframes ticker-flow { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
 @keyframes copy-rise { from { opacity: 0; filter: blur(4px); transform: translateY(16px); } to { opacity: 1; filter: blur(0); transform: translateY(0); } }
 @keyframes section-title-in { from { opacity: 0; clip-path: inset(0 0 100% 0); transform: translateY(24px); } to { opacity: 1; clip-path: inset(0 0 0 0); transform: translateY(0); } }
 @keyframes result-pop { 0% { opacity: 0; filter: blur(5px); transform: translateY(10px) scale(0.96); } 70% { opacity: 1; filter: blur(0); transform: translateY(-2px) scale(1.015); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
