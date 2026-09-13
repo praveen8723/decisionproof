@@ -153,29 +153,9 @@ main { width: 100%; }
 .proof-node small { margin-top: 4px; color: #62646c; font-size: 0.59rem; letter-spacing: 0.04em; }
 .proof-node.active .node-icon { color: var(--lime); background-color: var(--lime); }
 .proof-node.active b { color: var(--white); }
-.proof-flow.is-live .proof-node:not(:last-child)::after { background: linear-gradient(90deg, #353741 0 35%, var(--lime) 48% 58%, #353741 70% 100%); background-size: 320% 100%; animation: connector-sweep 5s linear infinite; }
-.proof-flow.is-live .proof-node:nth-child(2)::after { animation-delay: 1s; }
-.proof-flow.is-live .proof-node:nth-child(3)::after { animation-delay: 2s; }
-.proof-flow.is-live .proof-node:nth-child(4)::after { animation-delay: 3s; }
-.proof-flow.is-live .proof-node .node-icon { animation: node-cycle 5s ease-in-out infinite; }
-.proof-flow.is-live .proof-node:nth-child(2) .node-icon { animation-delay: 1s; }
-.proof-flow.is-live .proof-node:nth-child(3) .node-icon { animation-delay: 2s; }
-.proof-flow.is-live .proof-node:nth-child(4) .node-icon { animation-delay: 3s; }
-.proof-flow.is-live .proof-node:nth-child(5) .node-icon { animation-delay: 4s; }
-.proof-flow.is-live .proof-node:nth-child(1) b { animation: label-cycle 5s ease-in-out infinite; }
-.proof-flow.is-live .proof-node:nth-child(2) b { animation: label-cycle 5s 1s ease-in-out infinite; }
-.proof-flow.is-live .proof-node:nth-child(3) b { animation: label-cycle 5s 2s ease-in-out infinite; }
-.proof-flow.is-live .proof-node:nth-child(4) b { animation: label-cycle 5s 3s ease-in-out infinite; }
-.proof-flow.is-live .proof-node:nth-child(5) b { animation: label-cycle 5s 4s ease-in-out infinite; }
-.proof-flow.is-running .proof-node .node-icon { animation: node-read 1.8s ease-in-out infinite; }
-.proof-flow.is-running .proof-node:not(:last-child)::after { animation: connector-read 1.8s ease-in-out infinite; }
-.proof-flow.is-running .proof-node:nth-child(2) .node-icon,
-.proof-flow.is-running .proof-node:nth-child(2)::after { animation-delay: 300ms; }
-.proof-flow.is-running .proof-node:nth-child(3) .node-icon,
-.proof-flow.is-running .proof-node:nth-child(3)::after { animation-delay: 600ms; }
-.proof-flow.is-running .proof-node:nth-child(4) .node-icon,
-.proof-flow.is-running .proof-node:nth-child(4)::after { animation-delay: 900ms; }
-.proof-flow.is-running .proof-node:nth-child(5) .node-icon { animation-delay: 1200ms; }
+.proof-flow.is-live .proof-node.is-reached .node-icon { color: var(--lime); background-color: var(--lime); transform: scale(1.08); }
+.proof-flow.is-live .proof-node.is-reached b { color: var(--white); }
+.proof-flow.is-live .proof-node.is-linked::after { background: linear-gradient(90deg, var(--lime) 0 50%, #353741 50% 100%); background-size: 200% 100%; animation: connector-fill 520ms cubic-bezier(0.2, 0, 0.38, 0.9) forwards; }
 .proof-flow.is-complete .proof-node:not(:last-child)::after { background: var(--lime); }
 .proof-flow.is-complete .proof-node .node-icon { color: var(--lime); background-color: var(--lime); }
 .proof-flow.is-complete .proof-node b { color: var(--white); }
@@ -393,11 +373,7 @@ footer > span { text-align: right; }
 
 @keyframes live-pulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
 @keyframes link-lock { 0%, 75%, 100% { opacity: 0.35; transform: rotate(45deg) scale(0.7); } 84% { opacity: 1; transform: rotate(45deg) scale(1); } }
-@keyframes node-read { 0%, 100% { transform: scale(1); color: #767984; background-color: #767984; } 35% { transform: scale(1.08); color: var(--lime); background-color: var(--lime); } }
-@keyframes connector-read { 0%, 100% { background: #353741; transform: scaleX(0.2); } 35%, 65% { background: var(--lime); transform: scaleX(1); } }
-@keyframes connector-sweep { 0% { background-position: 110% 0; } 28%, 100% { background-position: -55% 0; } }
-@keyframes node-cycle { 0%, 17%, 100% { transform: scale(1); color: #767984; background-color: #767984; } 6%, 12% { transform: scale(1.12); color: var(--lime); background-color: var(--lime); } }
-@keyframes label-cycle { 0%, 17%, 100% { color: #a7a9b0; } 6%, 12% { color: var(--white); } }
+@keyframes connector-fill { from { background-position: 100% 0; } to { background-position: 0 0; } }
 @keyframes scan { 0%, 100% { top: 20px; opacity: 0.4; } 50% { top: 125px; opacity: 1; } }
 @keyframes surface-scan { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(570px); opacity: 0; } }
 @keyframes receipt-enter { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
@@ -441,8 +417,7 @@ footer > span { text-align: right; }
   .proof-flow { min-height: 370px; padding: 35px 24px; grid-template-columns: 1fr; gap: 14px; }
   .proof-node { display: grid; grid-template-columns: 40px 1fr; column-gap: 17px; text-align: left; }
   .proof-node:not(:last-child)::after { width: 1px; height: 14px; top: 35px; left: 17px; transform-origin: top; }
-  .proof-flow.is-running .proof-node:not(:last-child)::after { animation-name: connector-read-mobile; }
-  .proof-flow.is-live .proof-node:not(:last-child)::after { background: linear-gradient(180deg, #353741 0 35%, var(--lime) 48% 58%, #353741 70% 100%); background-size: 100% 320%; animation-name: connector-sweep-mobile; }
+  .proof-flow.is-live .proof-node.is-linked::after { background: linear-gradient(180deg, var(--lime) 0 50%, #353741 50% 100%); background-size: 100% 200%; animation-name: connector-fill-mobile; }
   .node-icon { width: 34px; height: 34px; margin: 0; grid-row: 1 / span 2; outline-width: 7px; }
   .proof-node b { align-self: end; }
   .proof-node small { align-self: start; }
@@ -482,8 +457,7 @@ footer > span { text-align: right; }
   footer p { text-align: center; }
 }
 
-@keyframes connector-read-mobile { 0%, 100% { background: #353741; transform: scaleY(0.2); } 35%, 65% { background: var(--lime); transform: scaleY(1); } }
-@keyframes connector-sweep-mobile { 0% { background-position: 0 110%; } 28%, 100% { background-position: 0 -55%; } }
+@keyframes connector-fill-mobile { from { background-position: 0 100%; } to { background-position: 0 0; } }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

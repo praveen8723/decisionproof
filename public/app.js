@@ -35,7 +35,38 @@ const storedHistory = (() => {
 const sessionDecisions = storedHistory;
 const sessionArtifacts = sessionDecisions.map((entry) => entry.result.artifact);
 let toastTimer = null;
-let proofResetTimer = null;
+let proofTimers = [];
+
+function stopProofSequence() {
+  proofTimers.forEach((timer) => clearTimeout(timer));
+  proofTimers = [];
+}
+
+function resetProofStages() {
+  proofFlow.querySelectorAll(".proof-node").forEach((node) => {
+    node.classList.remove("is-reached", "is-linked");
+  });
+}
+
+function startProofSequence({ loop = true } = {}) {
+  stopProofSequence();
+  resetProofStages();
+  proofFlow.classList.remove("is-complete");
+  proofFlow.classList.add("is-live");
+  const nodes = [...proofFlow.querySelectorAll(".proof-node")];
+  nodes[0]?.classList.add("is-reached");
+
+  nodes.slice(0, -1).forEach((node, index) => {
+    proofTimers.push(setTimeout(() => {
+      node.classList.add("is-linked");
+      nodes[index + 1].classList.add("is-reached");
+    }, 760 * (index + 1)));
+  });
+
+  if (loop) {
+    proofTimers.push(setTimeout(() => startProofSequence(), 760 * nodes.length + 1200));
+  }
+}
 
 function updateRiskVisual() {
   const value = Number(score.value);
@@ -243,24 +274,21 @@ form.addEventListener("submit", async (event) => {
   const data = Object.fromEntries(new FormData(form));
   data.consent = form.elements.consent.checked;
   setBusy(button, true, "Signing the decision…");
-  clearTimeout(proofResetTimer);
-  proofFlow.classList.remove("is-complete", "is-live");
+  startProofSequence({ loop: false });
   proofFlow.classList.add("is-running");
   receiptSurface.classList.add("is-sealing");
   try {
     const result = await api("/api?action=decisions", data);
     renderReceipt(result);
-    proofFlow.classList.remove("is-running");
+    stopProofSequence();
+    proofFlow.classList.remove("is-running", "is-live");
     proofFlow.classList.add("is-complete");
-    proofResetTimer = setTimeout(() => {
-      proofFlow.classList.remove("is-complete");
-      proofFlow.classList.add("is-live");
-    }, 1800);
+    proofTimers.push(setTimeout(() => startProofSequence(), 1800));
     receiptSurface.classList.remove("is-sealing");
     showToast("Decision recorded and verified with CooL.");
   } catch (error) {
     proofFlow.classList.remove("is-running");
-    proofFlow.classList.add("is-live");
+    startProofSequence();
     receiptSurface.classList.remove("is-sealing");
     showToast(error.message, "error");
   } finally {
@@ -270,6 +298,7 @@ form.addEventListener("submit", async (event) => {
 
 if (sessionDecisions[0]) renderReceipt(sessionDecisions[0].result, { remember: false });
 renderHistory();
+startProofSequence();
 
 document.querySelector("#verify-button").addEventListener("click", async (event) => {
   const button = event.currentTarget;
