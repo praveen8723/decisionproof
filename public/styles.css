@@ -467,12 +467,14 @@ footer > span { text-align: right; }
   .ticker-separator { min-width: 44px; flex-basis: 44px; }
   .hero-copy h1 { font-size: clamp(2.7rem, 13.2vw, 4rem); }
   .proof-flow { min-height: 370px; padding: 35px 24px; grid-template-columns: 1fr; gap: 14px; }
-  .proof-node { display: grid; grid-template-columns: 40px 1fr; column-gap: 17px; text-align: left; }
-  .proof-node:not(:last-child)::after { width: 1px; height: 14px; top: 35px; left: 17px; transform-origin: top; }
+  .proof-node { display: grid; grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr); column-gap: 16px; align-items: center; text-align: left; }
+  .proof-node:not(:last-child)::after { width: 1px; height: calc(100% - 20px); top: calc(50% + 17px); left: 50%; transform: translateX(-50%); transform-origin: top; }
   .proof-flow.is-live .proof-node.is-linked::after { background: linear-gradient(180deg, var(--lime) 0 50%, #353741 50% 100%); background-size: 100% 200%; animation-name: connector-fill-mobile; }
-  .node-icon { width: 34px; height: 34px; margin: 0; grid-row: 1 / span 2; outline-width: 7px; }
+  .node-icon { width: 34px; height: 34px; margin: 0; grid-column: 2; grid-row: 1 / span 2; justify-self: center; outline-width: 7px; }
+  .proof-node b, .proof-node small { grid-column: 3; }
   .proof-node b { align-self: end; }
   .proof-node small { align-self: start; }
+  .proof-node:nth-child(even) b, .proof-node:nth-child(even) small { grid-column: 1; text-align: right; }
   .engine-footer span { display: none; }
   .decision-studio { padding: 65px 14px 72px; }
   .studio-heading { align-items: flex-start; }
