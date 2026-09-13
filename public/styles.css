@@ -207,7 +207,7 @@ main { width: 100%; }
 .session-counter strong { font-size: 2.25rem; line-height: 0.9; }
 .studio-grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(410px, 0.92fr); gap: 0; align-items: stretch; }
 .application-surface { position: relative; z-index: 2; background: var(--white); border: 1px solid var(--ink); }
-.receipt-surface { min-height: 650px; position: relative; overflow: hidden; color: var(--white); background: var(--ink); border: 1px solid var(--ink); }
+.receipt-surface { min-height: 650px; position: relative; overflow: hidden; scroll-margin-top: 74px; color: var(--white); background: var(--ink); border: 1px solid var(--ink); }
 .surface-header, .receipt-header { min-height: 78px; padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; gap: 18px; border-bottom: 1px solid var(--line); }
 .receipt-header { border-color: var(--line-dark); }
 .surface-title { display: flex; align-items: center; gap: 13px; }
@@ -337,7 +337,7 @@ button:disabled { cursor: wait; opacity: 0.58; transform: none !important; }
 .verifier-intro > p:not(.section-kicker) { max-width: 450px; margin: 18px 0 0; color: rgba(255,255,255,0.72); font-size: 0.96rem; line-height: 1.55; }
 .verification-mark { width: 190px; height: 190px; margin-top: 45px; position: relative; display: grid; place-items: center; }
 .orbit { position: absolute; inset: 0; border: 1px solid rgba(255,255,255,0.22); border-radius: 50%; }
-.orbit.one::before { content: ""; width: 12px; height: 12px; position: absolute; top: 18px; left: 22px; background: var(--lime); border-radius: 50%; box-shadow: 0 0 16px rgba(200,255,77,0.7); }
+.orbit.one::before { content: ""; width: 12px; height: 12px; position: absolute; top: 14.645%; left: 14.645%; background: var(--lime); border-radius: 50%; box-shadow: 0 0 16px rgba(200,255,77,0.7); transform: translate(-50%, -50%); }
 .orbit.two { inset: 30px; animation: orbit-reverse 7s linear infinite; }
 .orbit.two::after { content: ""; width: 7px; height: 7px; position: absolute; right: -4px; top: 50%; background: var(--white); border-radius: 50%; }
 .orbit.one { animation: orbit 9s linear infinite; }

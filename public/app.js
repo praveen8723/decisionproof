@@ -319,6 +319,10 @@ form.addEventListener("submit", async (event) => {
     proofFlow.classList.add("is-complete");
     proofTimers.push(setTimeout(() => startProofSequence(), 1800));
     receiptSurface.classList.remove("is-sealing");
+    if (window.matchMedia("(max-width: 850px)").matches) {
+      const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+      requestAnimationFrame(() => receiptSurface.scrollIntoView({ behavior, block: "start" }));
+    }
     showToast("Decision recorded and verified with CooL.");
   } catch (error) {
     proofFlow.classList.remove("is-running");
